@@ -18,8 +18,11 @@
   mov ecx, %1
   mov edx, %2
   int 80h
+%endmacro
+%macro cin_num 2
+  cin %1, %2
   lea esi, [%1]
-  call readString
+  call readNum
   push ebx
 %endmacro
 %macro exit 1 ; exits the program with exit code %1
@@ -27,7 +30,7 @@
   mov ebx, %1
   int 80h
 %endmacro
-readString:
+readNum:
   xor ebx,ebx
   .next_digit:
     movzx eax, byte [esi]
@@ -35,6 +38,25 @@ readString:
     sub al, '0'
     imul ebx, 10
     add ebx, eax
+    cmp byte [esi], 0xA
+    jne .next_digit
+    ret
+readInt:
+  xor ebx,ebx
+  xor ecx, ecx
+  movzx eax, byte [esi]
+  xor eax, '-'
+  jnz .next_digit
+  inc esi
+  ;do negative conversions
+  .next_digit:
+    movzx eax, byte [esi]
+    sub al, '0'
+    imul ebx, 10
+    add ebx, eax
+    inc ecx
+    
+    inc esi
     cmp byte [esi], 0xA
     jne .next_digit
     ret

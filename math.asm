@@ -9,6 +9,17 @@
   int 80h
 %endmacro
 
+%macro subtract_nums 2 ; subtracts 2 numbers from the top of the stack and stores the result in %1
+  pop ebx
+  pop eax
+  sub eax, ebx
+  mov edi, %1
+  call num2str
+  sub edi, %1
+  mov [%2], edi
+  int 80h
+%endmacro
+
 %macro multiply_nums 2 ; multiplies 2 numbers from the top of the stack and stores the result in %1
   pop eax
   pop ebx
@@ -24,7 +35,13 @@
   pop ebx
   pop eax
   div ebx
+  push edx
   mov edi, %1
+  call num2str
+  dec edi
+  mov byte [edi], 'r'
+  inc edi
+  pop eax
   call num2str
   sub edi, %1
   mov [%2], edi
@@ -52,3 +69,7 @@ num2str: ; converts the byte in eax register to a string in the edi register
   inc edi
   mov byte [edi], 0
   ret
+
+
+
+
