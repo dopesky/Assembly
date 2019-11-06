@@ -2,10 +2,17 @@
   pop eax
   pop ebx
   add eax, ebx
+
   mov edi, %1
-  call num2str
-  sub edi, %1
-  mov [%2], edi
+  jns .negative
+  mov byte [edi], '-'
+  inc edi
+  neg eax
+
+  .negative:
+    call num2str
+    sub edi, %1
+    mov [%2], edi
   int 80h
 %endmacro
 
@@ -13,10 +20,17 @@
   pop ebx
   pop eax
   sub eax, ebx
+
   mov edi, %1
-  call num2str
-  sub edi, %1
-  mov [%2], edi
+  jns .negative1
+  mov byte [edi], '-'
+  inc edi
+  neg eax
+
+  .negative1:
+    call num2str
+    sub edi, %1
+    mov [%2], edi
   int 80h
 %endmacro
 
@@ -24,25 +38,37 @@
   pop eax
   pop ebx
   mul ebx
+
   mov edi, %1
-  call num2str
-  sub edi, %1
-  mov [%2], edi
+  jns .negative2
+  mov byte [edi], '-'
+  inc edi
+  neg eax
+
+  .negative2:
+    call num2str
+    sub edi, %1
+    mov [%2], edi
   int 80h
 %endmacro
+
 %macro divide_nums 2 ;divides 2 numbers from the top of the stack and stores the result in %1
-  mov edx, 0
+  xor edx, edx
   pop ebx
   pop eax
   div ebx
   push edx
+
   mov edi, %1
   call num2str
+
   dec edi
   mov byte [edi], 'r'
   inc edi
+
   pop eax
   call num2str
+
   sub edi, %1
   mov [%2], edi
   int 80h
@@ -65,11 +91,9 @@ num2str: ; converts the byte in eax register to a string in the edi register
     mov [edi], edx
     inc edi
     loop .loop2
-  mov byte [edi], 0xa
-  inc edi
-  mov byte [edi], 0
-  ret
-
-
+    mov byte [edi], 0xa
+    inc edi
+    mov byte [edi], 0
+    ret
 
 
